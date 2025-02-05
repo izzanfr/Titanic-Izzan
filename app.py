@@ -4,6 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
 
 # Membuat judul
 st.title("Titanic Prediction Apps")
@@ -160,13 +161,26 @@ with st.expander("**Prediction**"):
         # MELAKUKAN PREDIKSI
         # ================================
         prediksi = logModel.predict(input_data)
-        probabilitas = logModel.predict_proba(input_data)[0][1]  # Probabilitas selamat
+        probabilitas = logModel.predict_proba(input_data)[0]  # Mengambil array probabilitas untuk kelas 0 dan 1
 
         # ================================
         # MENAMPILKAN HASIL PREDIKSI
         # ================================
         st.subheader("📝 Hasil Prediksi:")
         if prediksi[0] == 1:
-            st.success(f"✅ Penumpang diprediksi **Selamat** dengan probabilitas {probabilitas*100:.2f}%")
+            st.success(f"✅ Penumpang diprediksi **Selamat** dengan probabilitas {probabilitas[1] * 100:.2f}%")
         else:
-            st.error(f"❌ Penumpang diprediksi **Tidak Selamat** dengan probabilitas {(1 - probabilitas)*100:.2f}%")
+            st.error(f"❌ Penumpang diprediksi **Tidak Selamat** dengan probabilitas {probabilitas[0] * 100:.2f}%")
+        
+        # Visualisasi dengan progress bar untuk semua kelas
+        st.subheader("📊 Visualisasi Prediksi")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.text("Selamat")
+            st.progress(float(probabilitas[1]))
+            st.write(f"{probabilitas[1] * 100:.2f}%")
+        with col2:
+            st.text("Tidak Selamat")
+            st.progress(float(probabilitas[0]))
+            st.write(f"{probabilitas[0] * 100:.2f}%")
+
